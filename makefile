@@ -157,6 +157,17 @@ QEMU_FLAGS_VIRTIO=-device virtio-rng-pci \
 				 -vga virtio  \
 				 -soundhw ac97 
 
+QEMU_FLAGS_WITHOUT= -m $(CONFIG_MEMORY)M \
+		  -serial stdio \
+		  -rtc base=localtime \
+		  
+
+QEMU_FLAGS_WITHOUT_VIRTIO= -device virtio-rng-pci \
+				 -device virtio-serial \
+				 -nic user,model=virtio-net-pci \
+				 -vga virtio  \
+				
+
 .PHONY: run-qemu
 run-qemu: $(BOOTDISK)
 	@echo [QEMU] $^
@@ -169,6 +180,14 @@ run-qemu-no-kvm: $(BOOTDISK)
 run-qemu-virtio: $(BOOTDISK)
 	@echo [QEMU] $^
 	$(QEMU) $(QEMU_DISK)$(QEMU_FLAGS) $(QEMU_FLAGS_VIRTIO) $(QEMU_EXTRA) -enable-kvm
+
+run-qemu-without-sound: $(BOOTDISK)
+	@echo [QEMU] $^
+	$(QEMU) $(QEMU_DISK) $(QEMU_FLAGS_WITHOUT) $(QEMU_EXTRA)
+
+run-qemu-without-sound-virtio: $(BOOTDISK)
+	@echo [QEMU] $^
+	$(QEMU) $(QEMU_DISK) $(QEMU_FLAGS_WITHOUT) $(QEMU_FLAGS_WITHOUT_VIRTIO) $(QEMU_EXTRA) -enable-kvm
 
 .PHONY: run-bochs
 run-bochs: $(BOOTDISK)
